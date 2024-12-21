@@ -1,0 +1,16 @@
+{
+  "name": "tgs2json",
+  "description": "Fast and effective script to convert .tgs to .json.",
+  "version": "1.0.0",
+  "main": "tgs2json.js",
+  "type": "module",
+  "scripts": {
+    "start": "node tgs2json.js"
+  },
+  "keywords": [],
+  "author": "t.me/nullhq",
+  "license": "ISC",
+  "dependencies": {
+    "pako": "^2.1.0"
+  }
+}

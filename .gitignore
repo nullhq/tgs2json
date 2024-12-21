@@ -1,0 +1,9 @@
+# Cache
+.npm
+.vscode
+
+# Directory
+node_modules/
+
+# Lock files
+package-lock.json
