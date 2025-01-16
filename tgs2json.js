@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-
 // tgs2json tools !
 // Having the .tgs files, I initially thought about using an external tool to convert them into .json for my needs.
 // But then I thought, why not write my own script?
@@ -12,18 +11,18 @@ import path from 'path';
 import process from 'process';
 
 // Write the decompressed tgs data into a JSON file with the same original name.
-async function convertTgsToJson(tgsFilePath) {
+async function convertTgsToJson(tgsFilePath, outputDirectory) {
     try {
         const fileBuffer = await fs.readFile(tgsFilePath);
         const decompressedData = inflate(fileBuffer, { to: 'string' });
 
         const fileName = path.basename(tgsFilePath, '.tgs');
-        const jsonFilePath = path.join(path.dirname(tgsFilePath), `${fileName}.json`);
+        const jsonFilePath = path.join(outputDirectory, `${fileName}.json`);
 
         await fs.writeFile(jsonFilePath, decompressedData, 'utf-8');
-        console.log(`Converted file: ${jsonFilePath}`);
+        console.log(`Successfull converted file: ${jsonFilePath}`);
     } catch (error) {
-        console.error('Error occur during the conversion from .tgs to .json:', error);
+        console.error('Error occur during the conversion from .tgs to .json: ', error);
     }
 }
 
@@ -39,12 +38,27 @@ async function getTgsFiles(directory) {
 }
 
 // Main function to handle command line arguments and convert all or specifics .tgs files in a given directory
-async function main() {
+async function run() {
     const args = process.argv.slice(2);
     const directoryPath = process.cwd();
+    let outputDirectory = directoryPath;
 
     if (args.length === 0) {
         console.error('Please provide a .tgs file or * to convert all files in the current directory.');
+        process.exit(1);
+    }
+
+    const outputIndex = args.indexOf('-o');
+    if (outputIndex !== -1 && args[outputIndex + 1]) {
+        outputDirectory = path.resolve(args[outputIndex + 1]);
+        args.splice(outputIndex, 2); // Remove the -o and the output directory from the arguments
+    }
+
+    // Create the output directory if it doesn't exist
+    try {
+        await fs.mkdir(outputDirectory, { recursive: true });
+    } catch (error) {
+        console.error('Error creating output directory:', error);
         process.exit(1);
     }
 
@@ -59,7 +73,7 @@ async function main() {
         for (const tgsFile of tgsFiles) {
             const tgsFilePath = path.join(directoryPath, tgsFile);
             try {
-                await convertTgsToJson(tgsFilePath);
+                await convertTgsToJson(tgsFilePath, outputDirectory);
             } catch {
                 console.error(`Error converting file with path: ${tgsFilePath}`);
             }
@@ -68,7 +82,7 @@ async function main() {
         for (const tgsFile of args) {
             const tgsFilePath = path.join(directoryPath, tgsFile);
             try {
-                await convertTgsToJson(tgsFilePath);
+                await convertTgsToJson(tgsFilePath, outputDirectory);
             } catch {
                 console.error(`Error converting file with path: ${tgsFilePath}`);
             }
@@ -76,4 +90,4 @@ async function main() {
     }
 }
 
-main();
+run();
