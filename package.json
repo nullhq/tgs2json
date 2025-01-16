@@ -1,6 +1,6 @@
 {
   "name": "tgs2json",
-  "description": "Fast and effective script to convert .tgs to .json.",
+  "description": "Quick and effective CLI tool for converting Telegram .tgs stickers into .json format.",
   "version": "1.0.0",
   "main": "tgs2json.js",
   "type": "module",

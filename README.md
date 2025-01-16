@@ -1,6 +1,6 @@
 # tgs2json
 
-`tgs2json` is a command-line tool to convert `.tgs` files into `.json` files quickly and easily.
+`tgs2json`  is a quick and effective command-line tool for converting Telegram `.tgs` sticker files into `.json` format quickly and easily.
 
 ---
 
@@ -13,7 +13,7 @@ Make sure you have Node.js installed on your system. You can download it from [n
 To install globally, run:
 
 ```sh
-npm install tgs2json-cli -g
+npm i tgs2json -g
 ```
 
 ### Clone the Repository
@@ -28,7 +28,6 @@ cd tgs2json
 To make the script globally executable, run:
 
 ```sh
-npm link
 npm install -g
 ```
 
