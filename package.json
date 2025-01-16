@@ -4,10 +4,9 @@
   "version": "1.0.0",
   "main": "tgs2json.js",
   "type": "module",
-  "scripts": {
-    "start": "node tgs2json.js"
+  "bin": {
+    "tgs2json": "./tgs2json.js"
   },
-  "keywords": [],
   "author": "t.me/nullhq",
   "license": "ISC",
   "dependencies": {
