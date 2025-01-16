@@ -1,5 +1,7 @@
-// tgs2json tools !
+#!/usr/bin/env node
 
+
+// tgs2json tools !
 // Having the .tgs files, I initially thought about using an external tool to convert them into .json for my needs.
 // But then I thought, why not write my own script?
 // It's quite simple, and here it's: I built tgs2json!
@@ -7,6 +9,7 @@
 import { inflate } from 'pako';
 import fs from 'fs/promises';
 import path from 'path';
+import process from 'process';
 
 // Write the decompressed tgs data into a JSON file with the same original name.
 async function convertTgsToJson(tgsFilePath) {
@@ -15,7 +18,7 @@ async function convertTgsToJson(tgsFilePath) {
         const decompressedData = inflate(fileBuffer, { to: 'string' });
 
         const fileName = path.basename(tgsFilePath, '.tgs');
-        const jsonFilePath = path.join(__dirname, `./json/${fileName}.json`);
+        const jsonFilePath = path.join(path.dirname(tgsFilePath), `${fileName}.json`);
 
         await fs.writeFile(jsonFilePath, decompressedData, 'utf-8');
         console.log(`Converted file: ${jsonFilePath}`);
@@ -35,12 +38,42 @@ async function getTgsFiles(directory) {
     }
 }
 
-// define the path to the directory containing .tgs files
-const directoryPath = path.join(__dirname, './assets/tgs/');
-const listFiles = await getTgsFiles(directoryPath);
+// Main function to handle command line arguments and convert all or specifics .tgs files in a given directory
+async function main() {
+    const args = process.argv.slice(2);
+    const directoryPath = process.cwd();
 
-// lùoop through each .tgs file and convert it to .json
-for (const file of listFiles) {
-    const tgsFilePath = path.join(directoryPath, file);
-    await convertTgsToJson(tgsFilePath);
+    if (args.length === 0) {
+        console.error('Please provide a .tgs file or * to convert all files in the current directory.');
+        process.exit(1);
+    }
+
+
+    if (args[0] === '*') {
+        const tgsFiles = await getTgsFiles(directoryPath);
+        if (tgsFiles.length === 0) {
+            console.error('No .tgs files found in the current directory.');
+            process.exit(1);
+        }
+
+        for (const tgsFile of tgsFiles) {
+            const tgsFilePath = path.join(directoryPath, tgsFile);
+            try {
+                await convertTgsToJson(tgsFilePath);
+            } catch {
+                console.error(`Error converting file with path: ${tgsFilePath}`);
+            }
+        }
+    } else {
+        for (const tgsFile of args) {
+            const tgsFilePath = path.join(directoryPath, tgsFile);
+            try {
+                await convertTgsToJson(tgsFilePath);
+            } catch {
+                console.error(`Error converting file with path: ${tgsFilePath}`);
+            }
+        }
+    }
 }
+
+main();

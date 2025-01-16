@@ -7,3 +7,7 @@ node_modules/
 
 # Lock files
 package-lock.json
+
+# test files
+notfoundduck.json
+notfoundduck.tgs
